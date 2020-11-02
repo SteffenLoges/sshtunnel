@@ -1,20 +1,37 @@
 package sshtunnel
 
 import (
-	"golang.org/x/crypto/ssh"
 	"io/ioutil"
+
+	"golang.org/x/crypto/ssh"
 )
 
-func PrivateKeyFile(file string) ssh.AuthMethod {
+func ParsePrivateKeyFile(file string, passphrase []byte) (ssh.AuthMethod, error) {
+
 	buffer, err := ioutil.ReadFile(file)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	key, err := ssh.ParsePrivateKey(buffer)
+	return ParsePrivateKey(buffer, passphrase)
+
+}
+
+func ParsePrivateKey(buffer []byte, passphrase []byte) (ssh.AuthMethod, error) {
+
+	var signer ssh.Signer
+	var err error
+
+	if passphrase != nil {
+		signer, err = ssh.ParsePrivateKeyWithPassphrase(buffer, passphrase)
+	} else {
+		signer, err = ssh.ParsePrivateKey(buffer)
+	}
+
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
-	return ssh.PublicKeys(key)
+	return ssh.PublicKeys(signer), nil
+
 }

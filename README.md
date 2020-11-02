@@ -43,6 +43,7 @@ auth = ssh.Password("YOUR_PASSWORD")
 // ------------------------------------------
 
 // Auth with path to private key
+// Use nil as 2nd parameter for unprotected key files
 // auth, err = sshtunnel.ParsePrivateKeyFile("d:/id_ed25519", []byte("YOUR_PASSPHRASE"))
 
 // ==========================================
